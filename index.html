@@ -506,6 +506,72 @@ let state={
 let mvType='entrata', selScale=0, selChips=new Set();
 const TODAY=()=>new Date().toISOString().slice(0,10);
 
+// ══ LOCK SCREEN ══
+let lockPin = '';
+let lockSaved = localStorage.getItem('kate_pin') || '';
+let lockMode = lockSaved ? 'verify' : 'set';
+let lockConfirm = '';
+
+function initLock(){
+  lockSaved = localStorage.getItem('kate_pin') || '';
+  lockMode = lockSaved ? 'verify' : 'set';
+  lockPin = ''; lockConfirm = '';
+  const sub = document.querySelector('.lock-sub');
+  if(sub) sub.textContent = lockMode === 'set' ? 'Scegli un PIN a 4 cifre' : 'Inserisci il codice';
+  updateDots();
+}
+
+function lockInput(n){
+  if(lockPin.length >= 4) return;
+  lockPin += n;
+  updateDots();
+  if(lockPin.length === 4) setTimeout(checkLock, 150);
+}
+
+function lockDelete(){
+  lockPin = lockPin.slice(0,-1);
+  updateDots();
+  document.getElementById('lock-error').textContent = '';
+}
+
+function updateDots(){
+  for(let i=0;i<4;i++){
+    const d = document.getElementById('d'+i);
+    if(d) d.className = 'lock-dot' + (i < lockPin.length ? ' filled' : '');
+  }
+}
+
+function checkLock(){
+  const errEl = document.getElementById('lock-error');
+  const sub = document.querySelector('.lock-sub');
+  if(lockMode === 'set'){
+    if(lockConfirm === ''){
+      lockConfirm = lockPin; lockPin = '';
+      if(sub) sub.textContent = 'Conferma il PIN';
+      updateDots();
+    } else {
+      if(lockPin === lockConfirm){
+        localStorage.setItem('kate_pin', lockPin);
+        document.getElementById('lock-screen').style.display = 'none';
+      } else {
+        if(errEl) errEl.textContent = 'I PIN non corrispondono. Riprova.';
+        lockPin = ''; lockConfirm = '';
+        if(sub) sub.textContent = 'Scegli un PIN a 4 cifre';
+        updateDots();
+      }
+    }
+  } else {
+    if(lockPin === lockSaved){
+      document.getElementById('lock-screen').style.display = 'none';
+    } else {
+      if(errEl) errEl.textContent = 'PIN errato. Riprova.';
+      lockPin = '';
+      updateDots();
+    }
+  }
+}
+
+
 function load(){
   try{const r=localStorage.getItem('kate_app_v1');if(r){const s=JSON.parse(r);state={...state,...s};}}catch(e){}
   document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'long'});
@@ -1067,6 +1133,7 @@ function clearAiChat(){aiMessages=[];renderAiMessages();}
 
 load();
 initAiSection();
+initLock();
 </script>
 </body>
 </html>
