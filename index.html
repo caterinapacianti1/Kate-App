@@ -195,7 +195,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .cl-text{flex:1}
 .cl-text.done{text-decoration:line-through;color:var(--text3)}
 <style>
-#lock-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px}
+#lock-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;overflow:hidden;touch-action:none}
 .lock-logo{font-size:48px;margin-bottom:8px}
 .lock-title{font-size:24px;font-weight:700;color:var(--accent);margin-bottom:4px}
 .lock-sub{font-size:14px;color:var(--text3);margin-bottom:40px}
@@ -212,7 +212,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <body>
 
 <!-- ══ LOCK SCREEN ══ -->
-<div id="lock-screen">
+<div id="lock-screen" onscroll="return false;">
   <div class="lock-logo">✦</div>
   <div class="lock-title">Kate</div>
   <div class="lock-sub">Inserisci il codice</div>
@@ -519,6 +519,7 @@ function initLock(){
   const sub = document.querySelector('.lock-sub');
   if(sub) sub.textContent = lockMode === 'set' ? 'Scegli un PIN a 4 cifre' : 'Inserisci il codice';
   updateDots();
+  document.body.style.overflow = 'hidden';
 }
 
 function lockInput(n){
@@ -553,6 +554,7 @@ function checkLock(){
       if(lockPin === lockConfirm){
         localStorage.setItem('kate_pin', lockPin);
         document.getElementById('lock-screen').style.display = 'none';
+        document.body.style.overflow = '';
       } else {
         if(errEl) errEl.textContent = 'I PIN non corrispondono. Riprova.';
         lockPin = ''; lockConfirm = '';
@@ -563,6 +565,7 @@ function checkLock(){
   } else {
     if(lockPin === lockSaved){
       document.getElementById('lock-screen').style.display = 'none';
+      document.body.style.overflow = '';
     } else {
       if(errEl) errEl.textContent = 'PIN errato. Riprova.';
       lockPin = '';
@@ -1067,7 +1070,7 @@ async function sendAiMessage(){
       parts:[{text: m.content}]
     }));
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${key}`,
       {
         method:'POST',
         headers:{'Content-Type':'application/json'},
