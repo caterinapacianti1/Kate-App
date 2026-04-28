@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kate">
+<meta name="theme-color" content="#ffffff">
+<title>Kate — La mia app</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#fff;--bg2:#f6f5f3;--bg3:#eceae7;
+  --text:#1a1a1a;--text2:#6b6b6b;--text3:#a8a8a8;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);
+  --green:#0F6E56;--green-bg:#E1F5EE;--green-text:#085041;
+  --red:#993C1D;--red-bg:#FAECE7;--red-text:#712B13;
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-text:#0C447C;
+  --amber:#854F0B;--amber-bg:#FAEEDA;--amber-text:#633806;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--purple-text:#26215C;
+  --pink:#993556;--pink-bg:#FBEAF0;--pink-text:#4B1528;
+  --accent:#534AB7;
+  --r:10px;--rl:14px;--rxl:18px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;
+    --text:#f2f2f7;--text2:#aeaeb2;--text3:#636366;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
+    --green:#5DCAA5;--green-bg:#04342C;--green-text:#9FE1CB;
+    --red:#F0997B;--red-bg:#4A1B0C;--red-text:#F5C4B3;
+    --blue:#85B7EB;--blue-bg:#042C53;--blue-text:#B5D4F4;
+    --amber:#EF9F27;--amber-bg:#412402;--amber-text:#FAC775;
+    --purple:#AFA9EC;--purple-bg:#26215C;--purple-text:#CECBF6;
+    --pink:#ED93B1;--pink-bg:#4B1528;--pink-text:#F4C0D1;
+    --accent:#AFA9EC;
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;max-width:480px;margin:0 auto;min-height:100vh}
+.safe-top{height:env(safe-area-inset-top,0px)}
+.pb{height:calc(env(safe-area-inset-bottom,0px) + 74px)}
+
+/* Header */
+.hdr{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:10;border-bottom:0.5px solid var(--border)}
+.hdr-title{font-size:18px;font-weight:700;color:var(--accent)}
+.hdr-sub{font-size:12px;color:var(--text2)}
+
+/* Bottom nav */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px)}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 2px 7px;cursor:pointer;font-size:10px;color:var(--text3);gap:3px;border:none;background:none;font-family:inherit}
+.ni.active{color:var(--accent)}
+.ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* Pages */
+.page{display:none;padding:14px 14px 0}
+.page.active{display:block}
+
+/* Cards */
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:15px;margin-bottom:12px}
+.ct{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:13px}
+
+/* Metric grid */
+.mg2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.mc{background:var(--bg2);border-radius:var(--r);padding:13px}
+.ml{font-size:11px;color:var(--text2);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.mv{font-size:20px;font-weight:700}
+.ms{font-size:11px;color:var(--text3);margin-top:2px}
+.pos{color:var(--green)}.neg{color:var(--red)}
+
+/* Rows */
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.row:last-child{border-bottom:none}
+.rn{font-size:14px;font-weight:500}
+.rs{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* Pills */
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px}
+.pg{background:var(--green-bg);color:var(--green-text)}
+.pr{background:var(--red-bg);color:var(--red-text)}
+.pb2{background:var(--blue-bg);color:var(--blue-text)}
+.pa{background:var(--amber-bg);color:var(--amber-text)}
+.pp{background:var(--purple-bg);color:var(--purple-text)}
+.ppk{background:var(--pink-bg);color:var(--pink-text)}
+
+/* Progress */
+.ptrack{background:var(--bg3);border-radius:99px;height:8px;overflow:hidden}
+.pfill{height:8px;border-radius:99px;transition:width .4s}
+
+/* Forms */
+.fs{background:var(--bg2);border-radius:var(--rl);padding:15px;margin-bottom:12px}
+.fst{font-size:13px;font-weight:600;margin-bottom:13px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-size:15px;color:var(--text);-webkit-appearance:none;font-family:inherit}
+.field textarea{resize:none;min-height:70px}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.btn{width:100%;padding:13px;border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.btn-p{background:var(--text);color:var(--bg)}
+.btn-s{background:var(--bg);color:var(--text);border:0.5px solid var(--border2)}
+.fbk{font-size:12px;margin-top:7px;min-height:17px;text-align:center}
+.del{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:3px 7px;line-height:1}
+.empty{font-size:13px;color:var(--text3);text-align:center;padding:20px 0}
+
+/* Type toggle */
+.ttog{display:flex;background:var(--bg3);border-radius:var(--r);padding:3px;margin-bottom:13px}
+.ttbtn{flex:1;padding:8px;text-align:center;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;color:var(--text2);border:none;background:none;font-family:inherit}
+.ttbtn.active{background:var(--bg);color:var(--text)}
+
+/* ══ BANCA ══ */
+.bank-hero{background:var(--accent);border-radius:var(--rxl);padding:20px;margin-bottom:12px;color:#fff}
+.bank-label{font-size:12px;opacity:.75;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.bank-amount{font-size:34px;font-weight:700;letter-spacing:-.5px}
+.bank-sub{font-size:12px;opacity:.7;margin-top:4px}
+.piggy-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.piggy{border-radius:var(--rl);padding:14px;position:relative;overflow:hidden;cursor:pointer}
+.piggy-icon{font-size:22px;margin-bottom:6px}
+.piggy-name{font-size:12px;font-weight:600;margin-bottom:4px;opacity:.85}
+.piggy-val{font-size:19px;font-weight:700}
+.piggy-bar{margin-top:8px;background:rgba(255,255,255,.25);border-radius:99px;height:4px;overflow:hidden}
+.piggy-fill{height:4px;border-radius:99px;background:rgba(255,255,255,.7)}
+.piggy-goal{font-size:10px;margin-top:4px;opacity:.7}
+.piggy-tasse{background:#3C3489;color:#fff}
+.piggy-affitto{background:#185FA5;color:#fff}
+.piggy-auto{background:#854F0B;color:#fff}
+.piggy-svago{background:#0F6E56;color:#fff}
+.piggy-custom{background:#534AB7;color:#fff}
+.piggy-fineco{background:#993556;color:#fff}
+.piggy-intesa-inv{background:#0F6E56;color:#fff}
+
+.move-sheet{background:var(--bg2);border-radius:var(--rl);padding:15px;margin-bottom:12px;display:none}
+.move-sheet.open{display:block}
+
+/* ══ DIETA ══ */
+.day-tabs{display:flex;overflow-x:auto;gap:6px;padding-bottom:8px;margin-bottom:12px;scrollbar-width:none}
+.day-tabs::-webkit-scrollbar{display:none}
+.dtab{flex-shrink:0;padding:7px 14px;border-radius:99px;font-size:13px;font-weight:500;cursor:pointer;border:0.5px solid var(--border2);background:none;color:var(--text2);font-family:inherit}
+.dtab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.dp-bar{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:11px 14px;background:var(--bg2);border-radius:var(--r)}
+.meal-block{margin-bottom:10px;border:0.5px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.meal-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--bg2)}
+.meal-name{font-size:13px;font-weight:600}
+.meal-time{font-size:11px;color:var(--text3)}
+.meal-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.meal-check.done{background:var(--green);border-color:var(--green)}
+.meal-check.done::after{content:'✓';font-size:11px;color:#fff;font-weight:700}
+.meal-body{padding:12px 14px;border-top:0.5px solid var(--border)}
+.meal-bullet{font-size:13px;color:var(--text);padding:3px 0;display:flex;align-items:flex-start;gap:8px}
+.bullet-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:7px}
+.meal-note-field{margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)}
+.meal-note-field label{font-size:11px;color:var(--text3);display:block;margin-bottom:4px}
+.meal-note-field textarea{width:100%;background:var(--bg);border:0.5px solid var(--border2);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--text);resize:none;min-height:60px;font-family:inherit}
+.integ-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.integ-row:last-child{border-bottom:none}
+.integ-check{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.integ-check.done{background:var(--green);border-color:var(--green)}
+.integ-check.done::after{content:'✓';font-size:12px;color:#fff;font-weight:700}
+
+/* ══ SINTOMI ══ */
+.scale-row{display:flex;gap:7px;margin-bottom:14px}
+.scale-btn{flex:1;padding:9px 4px;border-radius:var(--r);border:0.5px solid var(--border2);font-size:16px;font-weight:700;cursor:pointer;background:none;color:var(--text);font-family:inherit}
+.scale-btn.sel{background:var(--green-bg);border-color:var(--green);color:var(--green-text)}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{padding:7px 12px;border-radius:99px;border:0.5px solid var(--border2);font-size:13px;cursor:pointer;background:none;color:var(--text);font-family:inherit}
+.chip.sel{background:var(--red-bg);border-color:var(--red);color:var(--red-text)}
+.sl-entry{padding:10px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.sl-entry:last-child{border-bottom:none}
+
+/* ══ VIAGGI ══ */
+.trip-hero{background:linear-gradient(135deg,#534AB7,#D4537E);border-radius:var(--rxl);padding:20px;margin-bottom:12px;color:#fff}
+.trip-card{border-radius:var(--rl);overflow:hidden;margin-bottom:12px;border:0.5px solid var(--border)}
+.trip-card-hdr{background:var(--purple-bg);padding:14px;display:flex;align-items:center;justify-content:space-between}
+.trip-card-title{font-size:15px;font-weight:700;color:var(--purple-text)}
+.trip-card-dates{font-size:12px;color:var(--purple-text);opacity:.8}
+.trip-card-body{padding:14px}
+.trip-section{margin-bottom:14px}
+.trip-section-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.trip-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.trip-item:last-child{border-bottom:none}
+.trip-item-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.trip-budget-bar{margin-top:8px}
+.search-row{display:flex;gap:8px;margin-bottom:12px}
+.search-row input{flex:1;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-size:14px;color:var(--text);font-family:inherit}
+.search-row button{padding:10px 16px;border-radius:var(--r);border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0}
+.ext-link{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--r);background:var(--bg2);border:0.5px solid var(--border);margin-bottom:8px;cursor:pointer;text-decoration:none;color:var(--text)}
+.ext-link-name{font-size:13px;font-weight:500}
+.ext-link-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.ext-arrow{color:var(--text3);font-size:16px}
+.checklist-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:14px;cursor:pointer}
+.checklist-item:last-child{border-bottom:none}
+.cl-check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.cl-check.done{background:var(--green);border-color:var(--green)}
+.cl-check.done::after{content:'✓';font-size:10px;color:#fff;font-weight:700}
+.cl-text{flex:1}
+.cl-text.done{text-decoration:line-through;color:var(--text3)}
+</style>
+</head>
+<body>
+<div class="safe-top"></div>
+<div class="hdr">
+  <div class="hdr-title">Kate ✦</div>
+  <div class="hdr-sub" id="hdr-date"></div>
+</div>
+
+<!-- ══ BANCA ══ -->
+<div class="page active" id="page-banca">
+  <div class="bank-hero">
+    <div class="bank-label">Conto corrente Intesa</div>
+    <div class="bank-amount" id="bk-cc">€ 0,00</div>
+    <div class="bank-sub">Disponibile · aggiornato oggi</div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div style="font-size:13px;font-weight:600;color:var(--text2)">I miei salvadanai</div>
+    <button style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600" onclick="showAddPiggy()">+ Nuovo</button>
+  </div>
+  <div class="piggy-grid" id="piggy-grid"></div>
+
+  <!-- Muovi denaro -->
+  <div class="card">
+    <div class="ct">Registra movimento</div>
+    <div class="ttog">
+      <button class="ttbtn active" id="mv-in" onclick="setMvType('entrata')">Entrata</button>
+      <button class="ttbtn" id="mv-out" onclick="setMvType('uscita')">Uscita</button>
+      <button class="ttbtn" id="mv-tr" onclick="setMvType('trasferimento')">Sposta</button>
+    </div>
+    <div class="fr2">
+      <div class="field"><label>Importo (€)</label><input type="number" id="mv-amt" placeholder="0.00" min="0" step="0.01" inputmode="decimal"></div>
+      <div class="field"><label>Data</label><input type="date" id="mv-date"></div>
+    </div>
+    <div class="field" id="mv-from-wrap">
+      <label id="mv-from-label">Da</label>
+      <select id="mv-from"></select>
+    </div>
+    <div class="field" id="mv-to-wrap" style="display:none">
+      <label>A</label>
+      <select id="mv-to"></select>
+    </div>
+    <div class="fr2">
+      <div class="field" id="mv-cat-wrap">
+        <label>Categoria</label>
+        <select id="mv-cat">
+          <option>Stipendio</option><option>Freelancing</option><option>eBay</option><option>MaM</option><option>Rimborso</option><option>Affitto</option><option>Bollette</option><option>Spesa</option><option>Trasporti</option><option>Salute</option><option>Svago</option><option>Abbonamenti</option><option>Altro</option>
+        </select>
+      </div>
+      <div class="field"><label>Descrizione</label><input type="text" id="mv-desc" placeholder="es. Stipendio Opera Prima"></div>
+    </div>
+    <button class="btn btn-p" onclick="addMovimento()">Registra</button>
+    <div class="fbk" id="mv-fbk"></div>
+  </div>
+
+  <!-- Storico -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
+      <div class="ct" style="margin:0">Movimenti recenti</div>
+      <select id="mv-filter" style="font-size:12px;background:var(--bg2);border:0.5px solid var(--border);border-radius:8px;padding:5px 9px;color:var(--text);font-family:inherit" onchange="renderMovimentiList()">
+        <option value="all">Tutti</option>
+        <option value="entrata">Entrate</option>
+        <option value="uscita">Uscite</option>
+        <option value="trasferimento">Spostamenti</option>
+      </select>
+    </div>
+    <div id="mv-list"><div class="empty">Nessun movimento</div></div>
+  </div>
+
+  <!-- Aggiungi salvadanaio -->
+  <div class="move-sheet" id="add-piggy-sheet">
+    <div class="fst">Nuovo salvadanaio</div>
+    <div class="fr2">
+      <div class="field"><label>Nome</label><input type="text" id="np-name" placeholder="es. Vacanze"></div>
+      <div class="field"><label>Saldo iniziale (€)</label><input type="number" id="np-bal" placeholder="0" min="0"></div>
+    </div>
+    <div class="field"><label>Obiettivo (€, opzionale)</label><input type="number" id="np-goal" placeholder="es. 2000" min="0"></div>
+    <button class="btn btn-p" onclick="addPiggy()" style="margin-bottom:8px">Crea salvadanaio</button>
+    <button class="btn btn-s" onclick="hideAddPiggy()">Annulla</button>
+    <div class="fbk" id="np-fbk"></div>
+  </div>
+
+  <div class="pb"></div>
+</div>
+
+<!-- ══ DIETA ══ -->
+<div class="page" id="page-dieta">
+  <div class="day-tabs" id="day-tabs"></div>
+  <div class="dp-bar">
+    <span style="font-size:13px;color:var(--text2)">Pasti completati</span>
+    <div class="ptrack" style="flex:1;height:6px"><div class="pfill" id="dp-fill" style="width:0%;background:var(--green)"></div></div>
+    <span style="font-size:13px;font-weight:600" id="dp-val">0/5</span>
+  </div>
+  <div id="meals-container"></div>
+  <div class="pb"></div>
+</div>
+
+<!-- ══ SINTOMI ══ -->
+<div class="page" id="page-sintomi">
+  <div class="card">
+    <div class="ct">Come ti senti oggi?</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Benessere generale (1 = male, 5 = ottimo)</div>
+    <div class="scale-row" id="scale-row">
+      <button class="scale-btn" onclick="setScale(1)">1</button>
+      <button class="scale-btn" onclick="setScale(2)">2</button>
+      <button class="scale-btn" onclick="setScale(3)">3</button>
+      <button class="scale-btn" onclick="setScale(4)">4</button>
+      <button class="scale-btn" onclick="setScale(5)">5</button>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Sintomi presenti</div>
+    <div class="chips-wrap" id="chips"></div>
+    <div class="field"><label>Note libere</label><textarea id="sint-note" placeholder="Come ti senti? Cosa hai notato?"></textarea></div>
+    <button class="btn btn-p" onclick="saveSintomi()">Salva diario</button>
+    <div class="fbk" id="s-fbk"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Storico</div>
+    <div id="sint-log"><div class="empty">Nessun diario salvato</div></div>
+  </div>
+  <div class="pb"></div>
+</div>
+
+<!-- ══ VIAGGI ══ -->
+<div class="page" id="page-viaggi">
+  <div class="trip-hero">
+    <div style="font-size:12px;opacity:.75;margin-bottom:4px">Il prossimo viaggio</div>
+    <div style="font-size:22px;font-weight:700" id="trip-hero-name">Nessun viaggio pianificato</div>
+    <div style="font-size:13px;opacity:.8;margin-top:4px" id="trip-hero-dates"></div>
+  </div>
+
+  <!-- AI Assistente -->
+  <div class="card" id="ai-card">
+    <div class="ct">Assistente viaggi AI</div>
+    <div id="ai-setup" style="display:none">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Inserisci la tua API key Anthropic per attivare l'assistente. Viene salvata solo sul tuo dispositivo.</div>
+      <div style="display:flex;gap:8px">
+        <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-size:14px;color:var(--text);font-family:inherit">
+        <button onclick="saveApiKey()" style="padding:10px 16px;border-radius:var(--r);border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Salva</button>
+      </div>
+      <div class="fbk" id="apikey-fbk"></div>
+    </div>
+    <div id="ai-chat-wrap">
+      <div id="ai-messages" style="min-height:80px;max-height:380px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:10px"></div>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <textarea id="ai-input" placeholder="Chiedimi una meta, idee per un weekend, cosa fare a Tokyo con 1000€..." style="flex:1;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-size:14px;color:var(--text);resize:none;min-height:48px;max-height:120px;font-family:inherit" onkeydown="aiEnter(event)"></textarea>
+        <button id="ai-send-btn" onclick="sendAiMessage()" style="width:44px;height:44px;border-radius:var(--r);border:none;background:var(--accent);color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">›</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px" id="ai-suggestions"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+        <div style="font-size:11px;color:var(--text3)">Powered by Claude · solo i messaggi viaggi sono inviati ad Anthropic</div>
+        <button onclick="clearAiChat()" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer">Cancella chat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cerca -->
+  <div class="card">
+    <div class="ct">Cerca e prenota</div>
+    <a class="ext-link" href="https://www.google.com/flights" target="_blank">
+      <div><div class="ext-link-name">Google Flights</div><div class="ext-link-sub">Cerca voli e imposta avvisi prezzi</div></div>
+      <div class="ext-arrow">›</div>
+    </a>
+    <a class="ext-link" href="https://www.booking.com" target="_blank">
+      <div><div class="ext-link-name">Booking.com</div><div class="ext-link-sub">Hotel, appartamenti, B&B</div></div>
+      <div class="ext-arrow">›</div>
+    </a>
+    <a class="ext-link" href="https://www.airbnb.it" target="_blank">
+      <div><div class="ext-link-name">Airbnb</div><div class="ext-link-sub">Case e esperienze locali</div></div>
+      <div class="ext-arrow">›</div>
+    </a>
+    <a class="ext-link" href="https://www.thefork.it" target="_blank">
+      <div><div class="ext-link-name">TheFork</div><div class="ext-link-sub">Ristoranti con prenotazione</div></div>
+      <div class="ext-arrow">›</div>
+    </a>
+    <a class="ext-link" href="https://www.tripadvisor.it" target="_blank">
+      <div><div class="ext-link-name">TripAdvisor</div><div class="ext-link-sub">Ispirazione, recensioni, attrazioni</div></div>
+      <div class="ext-arrow">›</div>
+    </a>
+  </div>
+
+  <!-- I miei viaggi -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div style="font-size:13px;font-weight:600;color:var(--text2)">I miei viaggi</div>
+    <button style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600" onclick="showTripForm()">+ Nuovo viaggio</button>
+  </div>
+  <div id="trips-list"></div>
+
+  <!-- Form nuovo viaggio -->
+  <div class="move-sheet" id="trip-form-sheet">
+    <div class="fst">Nuovo viaggio</div>
+    <div class="field"><label>Destinazione</label><input type="text" id="tr-dest" placeholder="es. Barcellona"></div>
+    <div class="fr2">
+      <div class="field"><label>Dal</label><input type="date" id="tr-from"></div>
+      <div class="field"><label>Al</label><input type="date" id="tr-to"></div>
+    </div>
+    <div class="fr2">
+      <div class="field"><label>Budget totale (€)</label><input type="number" id="tr-budget" placeholder="1500" min="0"></div>
+      <div class="field"><label>Speso finora (€)</label><input type="number" id="tr-spent" placeholder="0" min="0"></div>
+    </div>
+    <div class="field"><label>Note / link utili</label><textarea id="tr-note" placeholder="Link al volo, nome hotel, cose da fare..."></textarea></div>
+    <button class="btn btn-p" onclick="addTrip()" style="margin-bottom:8px">Crea viaggio</button>
+    <button class="btn btn-s" onclick="hideTripForm()">Annulla</button>
+    <div class="fbk" id="tr-fbk"></div>
+  </div>
+
+  <div class="pb"></div>
+</div>
+
+<!-- ══ NAV ══ -->
+<div class="bnav">
+  <button class="ni active" onclick="goTo('banca',this)">
+    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+    Banca
+  </button>
+  <button class="ni" onclick="goTo('dieta',this)">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
+    Dieta
+  </button>
+  <button class="ni" onclick="goTo('sintomi',this)">
+    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+    Sintomi
+  </button>
+  <button class="ni" onclick="goTo('viaggi',this)">
+    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14z"/></svg>
+    Viaggi
+  </button>
+</div>
+
+<script>
+// ── DATI PIANO DIETETICO ──
+const PIANO = {
+  LU:{col:['Porridge / overnight oats con fiocchi di avena (preferibilmente certificati SG)','Bevanda vegetale (avena, mandorla o cocco)','Burro chiarificato in mantecatura (se caldo)','Frutti di bosco o ½ banana non troppo matura','Semi di chia (max 2 cucchiai)','Cannella','Tisana: malva, zenzero o curcuma'],spu:['Mandorle pelate','Noci di Macadamia o pinoli'],pra:['Pesce fresco o surgelato','Verdure spadellate, ripassate o al vapore (zucchine, carote, fagiolini…)','Gallette SG (no riso bianco) o pane grani antichi a liev. naturale, tostato','Olio EVO a crudo abbondante (almeno 2 cucchiai)'],mer:['Mandorle pelate, noci di Macadamia o pinoli'],cen:['Cereali a chicco SG (riso basmati/jasmine, grano saraceno, miglio, quinoa…)','Verdure spadellate, ripassate o al vapore','Lenticchie decorticate','Olio EVO a crudo abbondante']},
+  MA:{col:['Pane di grani antichi a lievitazione naturale, ben tostato','Burro chiarificato','Frutti di bosco o ½ banana non troppo matura','Cannella','Tisana: malva, zenzero o curcuma'],spu:['Banana non troppo matura o frutti di bosco'],pra:['Carne bianca','Verdure spadellate, ripassate o al vapore','Gallette SG o pane grani antichi a liev. naturale, tostato','Olio EVO a crudo abbondante'],mer:['Yogurt da latte di cocco'],cen:['Cereali a chicco SG','Verdure spadellate, ripassate o al vapore','Olive','Olio EVO a crudo abbondante']},
+  ME:{col:['Porridge / overnight oats con fiocchi di avena SG','Bevanda vegetale','Frutti di bosco o ½ banana non troppo matura','Semi di chia (max 2 cucchiai)','Cannella','Tisana: malva, zenzero o curcuma'],spu:['Mandorle pelate, noci di Macadamia o pinoli'],pra:['Uova','Verdure spadellate, ripassate o al vapore','Gallette SG o pane grani antichi a liev. naturale','Olio EVO a crudo abbondante'],mer:['Banana non troppo matura o frutti di bosco'],cen:['Cereali a chicco SG','Verdure spadellate, ripassate o al vapore','Pesce fresco o surgelato','Olio EVO a crudo abbondante']},
+  GI:{col:['Pane di grani antichi a lievitazione naturale, ben tostato','Crema di mandorle pelate 100%','Frutti di bosco o ½ banana non troppo matura','Cannella','Tisana: malva, zenzero o curcuma'],spu:['Yogurt da latte di cocco'],pra:['Pesce fresco o surgelato','Verdure spadellate, ripassate o al vapore','Gallette SG','Olio EVO a crudo abbondante'],mer:['Mandorle pelate, noci di Macadamia o pinoli'],cen:['Cereali a chicco SG','Verdure spadellate, ripassate o al vapore','Lenticchie decorticate','Olio EVO a crudo abbondante']},
+  VE:{col:['Porridge / overnight oats con fiocchi di avena SG','Bevanda vegetale','Frutti di bosco o ½ banana non troppo matura','Semi di chia (max 2 cucchiai)','Cannella','Tisana: malva, zenzero o curcuma'],spu:['Mandorle pelate, noci di Macadamia o pinoli'],pra:['Uova','Verdure spadellate, ripassate o al vapore','Gallette SG o pane grani antichi a liev. naturale','Olio EVO a crudo abbondante'],mer:['Yogurt da latte di cocco'],cen:['Cereali a chicco SG','Verdure spadellate, ripassate o al vapore','Olive','Olio EVO a crudo abbondante']},
+  SA:{col:['Pane di grani antichi a lievitazione naturale, ben tostato','Crema di mandorle pelate 100%','Frutti di bosco o ½ banana non troppo matura','Cannella','Tisana: malva, zenzero o curcuma'],spu:['Banana non troppo matura o frutti di bosco'],pra:['Carne bianca','Verdure spadellate, ripassate o al vapore','Patate o patate dolci','Olio EVO a crudo abbondante'],mer:['Mandorle pelate, noci di Macadamia o pinoli'],cen:['Pasta SG','Verdure spadellate, ripassate o al vapore','Pesce fresco o surgelato','Olio EVO a crudo abbondante']},
+  DO:{col:['Pane di grani antichi a lievitazione naturale, ben tostato','Burro chiarificato','Frutti di bosco o ½ banana non troppo matura','Cannella','Tisana: malva, zenzero o curcuma'],spu:['Mandorle pelate, noci di Macadamia o pinoli'],pra:['Pesce fresco o surgelato','Verdure spadellate, ripassate o al vapore','Patate o patate dolci','Olio EVO a crudo abbondante'],mer:['Banana non troppo matura o frutti di bosco'],cen:['Pasta SG con pesto di verdure e crema di mandorle 100%','Verdure spadellate, ripassate o al vapore','Olio EVO a crudo abbondante']}
+};
+const MEAL_META=[{key:'col',name:'Colazione',time:'07:00–09:00'},{key:'spu',name:'Spuntino',name2:'mattina',time:'10:30–11:30'},{key:'pra',name:'Pranzo',time:'12:30–14:00'},{key:'mer',name:'Merenda',time:'16:00–17:00'},{key:'cen',name:'Cena',time:'19:30–21:00'}];
+const DAYS_IT=['DO','LU','MA','ME','GI','VE','SA'];
+const DAYS_L=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+const SINTOMI_LIST=['Gonfiore','Dolore addominale','Nausea','Reflusso','Diarrea','Stipsi','Stanchezza','Mal di testa','Difficoltà digestiva','Prurito/rossore','Altro'];
+
+// ── PIGGY CONFIG ──
+const PIGGY_DEFAULT=[
+  {id:'cc',name:'Conto corrente',icon:'🏦',cls:'piggy-tasse',goal:0,balance:0,fixed:true},
+  {id:'tasse',name:'Tasse',icon:'📋',cls:'piggy-tasse',goal:5000,balance:0},
+  {id:'affitto',name:'Affitto',icon:'🏠',cls:'piggy-affitto',goal:2000,balance:0},
+  {id:'auto',name:'Auto',icon:'🚗',cls:'piggy-auto',goal:3000,balance:0},
+  {id:'svago',name:'Svago / Viaggi',icon:'✈️',cls:'piggy-svago',goal:2000,balance:0},
+  {id:'fineco',name:'Fondo emergenze (Fineco)',icon:'🛡',cls:'piggy-fineco',goal:7000,balance:7000},
+  {id:'intesa-inv',name:'Investimento Intesa',icon:'📈',cls:'piggy-intesa-inv',goal:5000,balance:2000},
+];
+
+let state={
+  pockets:[...PIGGY_DEFAULT.map(p=>({...p}))],
+  movimenti:[],
+  mealChecks:{},
+  mealNotes:{},
+  integChecks:{},
+  sintomi:[],
+  trips:[],
+  tripChecks:{}
+};
+
+let mvType='entrata', selScale=0, selChips=new Set();
+const TODAY=()=>new Date().toISOString().slice(0,10);
+
+function load(){
+  try{const r=localStorage.getItem('kate_app_v1');if(r){const s=JSON.parse(r);state={...state,...s};}}catch(e){}
+  document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'long'});
+  document.getElementById('mv-date').value=TODAY();
+  buildDayTabs();
+  buildChips();
+  renderAll();
+}
+function save(){try{localStorage.setItem('kate_app_v1',JSON.stringify(state));}catch(e){}}
+function fmt(n){return '€\u00a0'+Math.abs(n).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fbk(id,msg,err){const el=document.getElementById(id);el.style.color=err?'var(--red)':'var(--green)';el.textContent=msg;setTimeout(()=>el.textContent='',2500);}
+function goTo(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');window.scrollTo(0,0);
+}
+function renderAll(){renderBanca();renderDietaDay();renderSintomiLog();renderTrips();}
+
+// ══ BANCA ══
+function getPocket(id){return state.pockets.find(p=>p.id===id);}
+function ccBalance(){return getPocket('cc')?.balance||0;}
+
+function renderBanca(){
+  const cc=getPocket('cc');
+  document.getElementById('bk-cc').textContent=fmt(cc?.balance||0);
+  renderPiggies();
+  populatePocketSelects();
+  renderMovimentiList();
+}
+
+let editingPiggyId = null;
+
+function renderPiggies(){
+  const grid=document.getElementById('piggy-grid');
+  grid.innerHTML=state.pockets.filter(p=>p.id!=='cc').map(p=>{
+    const pct=p.goal>0?Math.min(100,Math.round(p.balance/p.goal*100)):0;
+    const isEditing = editingPiggyId === p.id;
+    if(isEditing){
+      return `<div class="piggy ${p.cls||'piggy-custom'}" style="grid-column:1/-1">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div><div class="piggy-icon" style="margin:0 0 2px">${p.icon||'💰'}</div><div class="piggy-name">${p.name}</div></div>
+          <div class="piggy-val">${fmt(p.balance)}</div>
+        </div>
+        <div style="font-size:12px;opacity:.8;margin-bottom:5px">Obiettivo (€)</div>
+        <div style="display:flex;gap:8px">
+          <input type="number" id="goal-input-${p.id}" value="${p.goal||''}" placeholder="es. 5000" min="0"
+            style="flex:1;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:8px 10px;font-size:15px;color:#fff;font-family:inherit;-webkit-appearance:none"
+            onkeydown="if(event.key==='Enter')savePiggyGoal('${p.id}')">
+          <button onclick="savePiggyGoal('${p.id}')" style="padding:8px 14px;border-radius:8px;border:none;background:rgba(255,255,255,.25);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Salva</button>
+          <button onclick="cancelEditPiggy()" style="padding:8px 10px;border-radius:8px;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:13px;cursor:pointer;font-family:inherit">✕</button>
+        </div>
+        ${p.goal>0?`<div class="piggy-bar" style="margin-top:10px"><div class="piggy-fill" style="width:${pct}%"></div></div><div class="piggy-goal">${pct}% · obiettivo ${fmt(p.goal)}</div>`:'<div class="piggy-goal" style="margin-top:8px">Nessun obiettivo impostato</div>'}
+      </div>`;
+    }
+    return `<div class="piggy ${p.cls||'piggy-custom'}" onclick="startEditPiggy('${p.id}')">
+      <div class="piggy-icon">${p.icon||'💰'}</div>
+      <div class="piggy-name">${p.name}</div>
+      <div class="piggy-val">${fmt(p.balance)}</div>
+      ${p.goal>0
+        ?`<div class="piggy-bar"><div class="piggy-fill" style="width:${pct}%"></div></div><div class="piggy-goal">${pct}% · obiettivo ${fmt(p.goal)}</div>`
+        :`<div class="piggy-goal" style="margin-top:6px;opacity:.6">Tocca per impostare obiettivo</div>`}
+    </div>`;}).join('');
+  if(editingPiggyId){
+    const inp=document.getElementById('goal-input-'+editingPiggyId);
+    if(inp){inp.focus();inp.select();}
+  }
+}
+
+function startEditPiggy(id){editingPiggyId=id;renderPiggies();}
+function cancelEditPiggy(){editingPiggyId=null;renderPiggies();}
+function savePiggyGoal(id){
+  const inp=document.getElementById('goal-input-'+id);
+  const val=parseFloat(inp?.value)||0;
+  const p=getPocket(id);
+  if(p)p.goal=val;
+  editingPiggyId=null;
+  save();renderPiggies();
+}
+
+function populatePocketSelects(){
+  const allOpts=state.pockets.map(p=>`<option value="${p.id}">${p.icon||'💰'} ${p.name}</option>`).join('');
+  const ccOpt=`<option value="cc">🏦 Conto corrente</option>`;
+  document.getElementById('mv-from').innerHTML=allOpts;
+  document.getElementById('mv-to').innerHTML=allOpts;
+  if(mvType==='entrata')document.getElementById('mv-from').innerHTML=`<option value="ext">Esterno</option>`;
+  if(mvType==='uscita')document.getElementById('mv-to').innerHTML=`<option value="ext">Esterno (spesa)</option>`;
+}
+
+function setMvType(t){
+  mvType=t;
+  ['in','out','tr'].forEach(k=>document.getElementById('mv-'+k).classList.remove('active'));
+  document.getElementById('mv-'+(t==='entrata'?'in':t==='uscita'?'out':'tr')).classList.add('active');
+  const fromWrap=document.getElementById('mv-from-wrap');
+  const toWrap=document.getElementById('mv-to-wrap');
+  const fromLabel=document.getElementById('mv-from-label');
+  const catWrap=document.getElementById('mv-cat-wrap');
+  const fromSel=document.getElementById('mv-from');
+  const toSel=document.getElementById('mv-to');
+  const allOpts=state.pockets.map(p=>`<option value="${p.id}">${p.icon||'💰'} ${p.name}</option>`).join('');
+  if(t==='entrata'){
+    fromLabel.textContent='In quale conto / salvadanaio';
+    fromSel.innerHTML=allOpts;
+    toWrap.style.display='none';
+    catWrap.style.display='';
+  } else if(t==='uscita'){
+    fromLabel.textContent='Da quale conto / salvadanaio';
+    fromSel.innerHTML=allOpts;
+    toWrap.style.display='none';
+    catWrap.style.display='';
+  } else {
+    fromLabel.textContent='Da';
+    fromSel.innerHTML=allOpts;
+    toSel.innerHTML=allOpts;
+    toWrap.style.display='';
+    catWrap.style.display='none';
+  }
+}
+
+function addMovimento(){
+  const amt=parseFloat(document.getElementById('mv-amt').value);
+  const date=document.getElementById('mv-date').value;
+  const desc=document.getElementById('mv-desc').value.trim();
+  const cat=document.getElementById('mv-cat').value||'';
+  if(!amt||amt<=0||!date){fbk('mv-fbk','Inserisci importo e data',true);return;}
+
+  const fromId=document.getElementById('mv-from').value;
+  const toId=document.getElementById('mv-to').value;
+
+  if(mvType==='entrata'){
+    const p=getPocket(fromId);if(p)p.balance=+(p.balance+amt).toFixed(2);
+    state.movimenti.unshift({type:'entrata',amt,date,desc,cat,pocket:fromId});
+  } else if(mvType==='uscita'){
+    const p=getPocket(fromId);
+    if(p&&p.balance<amt){fbk('mv-fbk','Saldo insufficiente in questo conto',true);return;}
+    if(p)p.balance=+(p.balance-amt).toFixed(2);
+    state.movimenti.unshift({type:'uscita',amt,date,desc,cat,pocket:fromId});
+  } else {
+    if(fromId===toId){fbk('mv-fbk','Scegli conti diversi',true);return;}
+    const fp=getPocket(fromId),tp=getPocket(toId);
+    if(fp&&fp.balance<amt){fbk('mv-fbk','Saldo insufficiente',true);return;}
+    if(fp)fp.balance=+(fp.balance-amt).toFixed(2);
+    if(tp)tp.balance=+(tp.balance+amt).toFixed(2);
+    state.movimenti.unshift({type:'trasferimento',amt,date,desc:desc||`${fp?.name||''}→${tp?.name||''}`,cat:'Spostamento',from:fromId,to:toId});
+  }
+  save();renderBanca();
+  document.getElementById('mv-amt').value='';document.getElementById('mv-desc').value='';
+  fbk('mv-fbk','Registrato');
+}
+
+function renderMovimentiList(){
+  const f=document.getElementById('mv-filter').value;
+  let mvs=state.movimenti;
+  if(f!=='all')mvs=mvs.filter(m=>m.type===f);
+  const el=document.getElementById('mv-list');
+  if(!mvs.length){el.innerHTML='<div class="empty">Nessun movimento</div>';return;}
+  el.innerHTML=mvs.slice(0,30).map((m,i)=>{
+    const col=m.type==='entrata'?'pos':m.type==='uscita'?'neg':'';
+    const sign=m.type==='entrata'?'+':m.type==='uscita'?'-':'↔';
+    const pill=m.type==='entrata'?'pg':m.type==='uscita'?'pr':'pp';
+    const pName=m.type==='trasferimento'?(m.desc||'Spostamento'):(getPocket(m.pocket)?.name||'');
+    return `<div class="row">
+      <div><div class="rn">${m.desc||m.cat} <span class="pill ${pill}">${m.cat||m.type}</span></div>
+      <div class="rs">${m.date}${pName?' · '+pName:''}</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:15px;font-weight:700" class="${col}">${sign}${fmt(m.amt)}</span>
+        <button class="del" onclick="delMov(${state.movimenti.indexOf(mvs[i])})">×</button>
+      </div>
+    </div>`;}).join('');
+}
+
+function delMov(i){
+  const m=state.movimenti[i];
+  if(m.type==='entrata'){const p=getPocket(m.pocket);if(p)p.balance=+(p.balance-m.amt).toFixed(2);}
+  else if(m.type==='uscita'){const p=getPocket(m.pocket);if(p)p.balance=+(p.balance+m.amt).toFixed(2);}
+  else{const fp=getPocket(m.from),tp=getPocket(m.to);if(fp)fp.balance=+(fp.balance+m.amt).toFixed(2);if(tp)tp.balance=+(tp.balance-m.amt).toFixed(2);}
+  state.movimenti.splice(i,1);save();renderBanca();
+}
+
+function showAddPiggy(){document.getElementById('add-piggy-sheet').classList.add('open');document.getElementById('add-piggy-sheet').scrollIntoView({behavior:'smooth'});}
+function hideAddPiggy(){document.getElementById('add-piggy-sheet').classList.remove('open');}
+function addPiggy(){
+  const name=document.getElementById('np-name').value.trim();
+  const bal=parseFloat(document.getElementById('np-bal').value)||0;
+  const goal=parseFloat(document.getElementById('np-goal').value)||0;
+  if(!name){fbk('np-fbk','Inserisci un nome',true);return;}
+  const id='custom_'+Date.now();
+  state.pockets.push({id,name,icon:'💰',cls:'piggy-custom',goal,balance:bal});
+  save();hideAddPiggy();renderBanca();
+  document.getElementById('np-name').value='';document.getElementById('np-bal').value='';document.getElementById('np-goal').value='';
+  fbk('np-fbk','Salvadanaio creato');
+}
+
+// ══ DIETA ══
+function buildDayTabs(){
+  const now=new Date(),wrap=document.getElementById('day-tabs');
+  wrap.innerHTML='';
+  for(let i=-3;i<=3;i++){
+    const d=new Date(now);d.setDate(now.getDate()+i);
+    const isToday=i===0;
+    const dk=DAYS_IT[d.getDay()];
+    const label=DAYS_L[d.getDay()]+' '+d.getDate();
+    const btn=document.createElement('button');
+    btn.className='dtab'+(isToday?' active':'');
+    btn.textContent=isToday?'Oggi':label;
+    btn.dataset.date=d.toISOString().slice(0,10);
+    btn.dataset.dk=dk;
+    btn.onclick=()=>{document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderDietaDay(btn.dataset.date,btn.dataset.dk);};
+    wrap.appendChild(btn);
+  }
+}
+
+const INTEGRATORI = [
+  {id:'metaclear', name:'Metaclear (Metagenics)', dose:'2 cp a colazione', pasto:'col'},
+  {id:'candex',    name:'Candex (Metagenics)',    dose:'2 cp la sera prima di dormire', pasto:'cen'},
+];
+
+function integKey(dateStr, id){ return `${dateStr}_integ_${id}`; }
+
+function toggleIntegById(dateStr, id){
+  const k = integKey(dateStr, id);
+  if(!state.integChecks) state.integChecks={};
+  state.integChecks[k] = !state.integChecks[k];
+  save();
+  const el = document.getElementById('integ-check-'+k);
+  if(el) el.className = 'integ-check'+(state.integChecks[k]?' done':'');
+}
+
+function integBlockHtml(dateStr, mealKey){
+  const integ = INTEGRATORI.filter(i=>i.pasto===mealKey);
+  if(!integ.length) return '';
+  if(!state.integChecks) state.integChecks={};
+  const rows = integ.map(i=>{
+    const k = integKey(dateStr, i.id);
+    const done = !!state.integChecks[k];
+    return `<div class="integ-row" style="padding:8px 0">
+      <div><div class="rn" style="font-size:13px">${i.name}</div><div class="rs">${i.dose}</div></div>
+      <div class="integ-check${done?' done':''}" id="integ-check-${k}" onclick="toggleIntegById('${dateStr}','${i.id}')"></div>
+    </div>`;}).join('');
+  return `<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)">
+    <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Integratori</div>
+    ${rows}
+  </div>`;
+}
+
+function ingredientKey(dateStr, mealKey, idx){ return `${dateStr}_ing_${mealKey}_${idx}`; }
+
+function toggleIngredient(dateStr, mealKey, idx){
+  const k = ingredientKey(dateStr, mealKey, idx);
+  if(!state.ingredientSkips) state.ingredientSkips={};
+  state.ingredientSkips[k] = !state.ingredientSkips[k];
+  save();
+  const el = document.getElementById('ing-'+k);
+  if(el){
+    const skipped = state.ingredientSkips[k];
+    el.style.textDecoration = skipped ? 'line-through' : 'none';
+    el.style.color = skipped ? 'var(--text3)' : 'var(--text)';
+    el.previousElementSibling.style.background = skipped ? 'var(--text3)' : 'var(--accent)';
+    el.previousElementSibling.style.opacity = skipped ? '0.4' : '1';
+  }
+}
+
+function renderDietaDay(dateStr,dk){
+  const now=new Date();
+  if(!dateStr)dateStr=now.toISOString().slice(0,10);
+  if(!dk)dk=DAYS_IT[now.getDay()];
+  const plan=PIANO[dk]||PIANO['LU'];
+  if(!state.ingredientSkips) state.ingredientSkips={};
+  let checked=0;
+  document.getElementById('meals-container').innerHTML=MEAL_META.map(m=>{
+    const ck=`${dateStr}_${m.key}`;
+    const done=!!state.mealChecks[ck];
+    if(done)checked++;
+    const noteKey=`${dateStr}_note_${m.key}`;
+    const noteVal=state.mealNotes[noteKey]||'';
+    const ingredients=(plan[m.key]||[]);
+    const bullets=ingredients.map((x,idx)=>{
+      const ingK=ingredientKey(dateStr, m.key, idx);
+      const skipped=!!state.ingredientSkips[ingK];
+      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border);cursor:pointer" onclick="toggleIngredient('${dateStr}','${m.key}',${idx})">
+        <div style="width:6px;height:6px;border-radius:50%;background:${skipped?'var(--text3)':'var(--accent)'};flex-shrink:0;margin-top:7px;opacity:${skipped?'0.4':'1'};transition:all .2s"></div>
+        <div id="ing-${ingK}" style="font-size:14px;line-height:1.5;text-decoration:${skipped?'line-through':'none'};color:${skipped?'var(--text3)':'var(--text)'};flex:1;transition:all .2s">${x}</div>
+      </div>`;}).join('');
+    return `<div class="meal-block">
+      <div class="meal-hdr">
+        <div><div class="meal-name">${m.name}</div><div class="meal-time">${m.time}</div></div>
+        <div class="meal-check${done?' done':''}" id="mc-${ck}" onclick="toggleMeal('${ck}','${dateStr}','${dk}')"></div>
+      </div>
+      <div class="meal-body">
+        <div style="margin-bottom:8px">${bullets}</div>
+        <div class="meal-note-field">
+          <label>Ho mangiato invece / in aggiunta</label>
+          <textarea id="mn-${noteKey}" onblur="saveMealNote('${noteKey}',this.value)">${noteVal}</textarea>
+        </div>
+        ${integBlockHtml(dateStr, m.key)}
+      </div>
+    </div>`;}).join('');
+  const pct=Math.round(checked/5*100);
+  document.getElementById('dp-fill').style.width=pct+'%';
+  document.getElementById('dp-val').textContent=checked+'/5';
+}
+
+function toggleMeal(ck,dateStr,dk){
+  state.mealChecks[ck]=!state.mealChecks[ck];save();
+  const el=document.getElementById('mc-'+ck);
+  if(el)el.className='meal-check'+(state.mealChecks[ck]?' done':'');
+  let c=0;MEAL_META.forEach(m=>{if(state.mealChecks[`${dateStr}_${m.key}`])c++;});
+  document.getElementById('dp-fill').style.width=Math.round(c/5*100)+'%';
+  document.getElementById('dp-val').textContent=c+'/5';
+}
+function saveMealNote(key,val){state.mealNotes[key]=val;save();}
+
+// ══ SINTOMI ══
+function buildChips(){
+  document.getElementById('chips').innerHTML=SINTOMI_LIST.map((s,i)=>
+    `<button class="chip" id="chip-${i}" onclick="toggleChip(${i},'${s}')">${s}</button>`).join('');
+}
+function toggleChip(i,name){if(selChips.has(name))selChips.delete(name);else selChips.add(name);document.getElementById('chip-'+i).classList.toggle('sel',selChips.has(name));}
+function setScale(n){selScale=n;document.querySelectorAll('.scale-btn').forEach((b,i)=>b.classList.toggle('sel',i+1<=n));}
+function saveSintomi(){
+  const note=document.getElementById('sint-note').value.trim();
+  if(!selScale){fbk('s-fbk','Seleziona il benessere (1–5)',true);return;}
+  state.sintomi.unshift({date:TODAY(),scale:selScale,chips:[...selChips],note});
+  save();selScale=0;selChips.clear();
+  document.querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.chip').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('sint-note').value='';
+  renderSintomiLog();fbk('s-fbk','Diario salvato');
+}
+function renderSintomiLog(){
+  const el=document.getElementById('sint-log');
+  if(!state.sintomi.length){el.innerHTML='<div class="empty">Nessun diario salvato</div>';return;}
+  const sc=s=>s>=4?'var(--green)':s>=3?'var(--amber)':'var(--red)';
+  el.innerHTML=state.sintomi.slice(0,14).map(s=>`
+    <div class="sl-entry">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">${s.date}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:${s.note?4:0}px">
+        <span style="font-size:16px;font-weight:700;color:${sc(s.scale)}">${s.scale}/5</span>
+        ${s.chips.length?s.chips.map(c=>`<span class="pill pr">${c}</span>`).join(''):'<span style="font-size:12px;color:var(--text3)">Nessun sintomo</span>'}
+      </div>
+      ${s.note?`<div style="font-size:12px;color:var(--text2)">${s.note}</div>`:''}
+    </div>`).join('');
+}
+
+// ══ VIAGGI ══
+function showTripForm(){document.getElementById('trip-form-sheet').classList.add('open');document.getElementById('trip-form-sheet').scrollIntoView({behavior:'smooth'});}
+function hideTripForm(){document.getElementById('trip-form-sheet').classList.remove('open');}
+function addTrip(){
+  const dest=document.getElementById('tr-dest').value.trim();
+  const from=document.getElementById('tr-from').value;
+  const to=document.getElementById('tr-to').value;
+  const budget=parseFloat(document.getElementById('tr-budget').value)||0;
+  const spent=parseFloat(document.getElementById('tr-spent').value)||0;
+  const note=document.getElementById('tr-note').value.trim();
+  if(!dest){fbk('tr-fbk','Inserisci la destinazione',true);return;}
+  state.trips.unshift({id:'trip_'+Date.now(),dest,from,to,budget,spent,note,checklist:[]});
+  save();hideTripForm();renderTrips();
+  ['tr-dest','tr-from','tr-to','tr-budget','tr-spent','tr-note'].forEach(id=>document.getElementById(id).value='');
+  fbk('tr-fbk','Viaggio creato');
+}
+function renderTrips(){
+  const el=document.getElementById('trips-list');
+  if(!state.trips.length){el.innerHTML='<div class="card"><div class="empty">Nessun viaggio pianificato</div></div>';document.getElementById('trip-hero-name').textContent='Nessun viaggio pianificato';document.getElementById('trip-hero-dates').textContent='';return;}
+  const next=state.trips[0];
+  document.getElementById('trip-hero-name').textContent=next.dest;
+  document.getElementById('trip-hero-dates').textContent=next.from&&next.to?`${next.from} → ${next.to}`:'Date da definire';
+  el.innerHTML=state.trips.map((t,ti)=>{
+    const pct=t.budget>0?Math.min(100,Math.round(t.spent/t.budget*100)):0;
+    const col=pct>90?'var(--red)':pct>70?'var(--amber)':'var(--green)';
+    const cl=t.checklist||[];
+    const clHtml=cl.map((item,ci)=>{
+      const done=!!state.tripChecks[`${t.id}_${ci}`];
+      return `<div class="checklist-item" onclick="toggleTripCheck('${t.id}',${ci})">
+        <div class="cl-check${done?' done':''}"></div>
+        <div class="cl-text${done?' done':''}">${item}</div>
+        <button class="del" onclick="event.stopPropagation();delCheckItem(${ti},${ci})">×</button>
+      </div>`;}).join('');
+    return `<div class="trip-card">
+      <div class="trip-card-hdr">
+        <div><div class="trip-card-title">${t.dest}</div><div class="trip-card-dates">${t.from||''}${t.from&&t.to?' → ':''}${t.to||''}</div></div>
+        <button class="del" onclick="delTrip(${ti})">×</button>
+      </div>
+      <div class="trip-card-body">
+        ${t.budget>0?`<div class="trip-section">
+          <div class="trip-section-title">Budget</div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--text2)">Speso: ${fmt(t.spent)}</span><span>/ ${fmt(t.budget)}</span></div>
+          <div class="ptrack"><div class="pfill" style="width:${pct}%;background:${col}"></div></div>
+        </div>`:''}
+        ${t.note?`<div class="trip-section"><div class="trip-section-title">Note e link</div><div style="font-size:13px;color:var(--text2);white-space:pre-wrap">${t.note}</div></div>`:''}
+        <div class="trip-section">
+          <div class="trip-section-title">Lista da fare / da portare</div>
+          ${clHtml}
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input type="text" id="cl-input-${ti}" placeholder="Aggiungi voce..." style="flex:1;background:var(--bg2);border:0.5px solid var(--border2);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--text);font-family:inherit">
+            <button onclick="addCheckItem(${ti})" style="padding:8px 14px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">+</button>
+          </div>
+        </div>
+      </div>
+    </div>`;}).join('');
+}
+function toggleTripCheck(tripId,ci){const k=`${tripId}_${ci}`;state.tripChecks[k]=!state.tripChecks[k];save();renderTrips();}
+function addCheckItem(ti){
+  const inp=document.getElementById('cl-input-'+ti);
+  const val=inp.value.trim();if(!val)return;
+  if(!state.trips[ti].checklist)state.trips[ti].checklist=[];
+  state.trips[ti].checklist.push(val);inp.value='';save();renderTrips();
+}
+function delCheckItem(ti,ci){state.trips[ti].checklist.splice(ci,1);save();renderTrips();}
+function delTrip(i){state.trips.splice(i,1);save();renderTrips();}
+
+// ══ AI ASSISTENTE VIAGGI ══
+const AI_SUGGESTIONS = [
+  'Dove andare a maggio con 1000€?',
+  'Weekend romantico in Europa',
+  'Mete economiche per l\'estate',
+  'Cosa fare a Lisbona 3 giorni',
+  'Quando è meglio visitare il Giappone?',
+  'Volo + hotel economico in Europa'
+];
+
+let aiMessages = [];
+let aiLoading = false;
+
+function getApiKey(){return localStorage.getItem('kate_api_key')||'';}
+
+function initAiSection(){
+  const key = getApiKey();
+  document.getElementById('ai-setup').style.display = key ? 'none' : 'block';
+  document.getElementById('ai-chat-wrap').style.display = key ? 'block' : 'none';
+  if(key) renderAiSuggestions();
+  renderAiMessages();
+}
+
+function saveApiKey(){
+  const val = document.getElementById('api-key-input').value.trim();
+  if(!val.startsWith('sk-ant-')){
+    const fbk=document.getElementById('apikey-fbk');
+    fbk.style.color='var(--red)';fbk.textContent='La chiave deve iniziare con sk-ant-';
+    setTimeout(()=>fbk.textContent='',3000);return;
+  }
+  localStorage.setItem('kate_api_key', val);
+  document.getElementById('api-key-input').value='';
+  initAiSection();
+}
+
+function renderAiSuggestions(){
+  const wrap = document.getElementById('ai-suggestions');
+  if(!wrap) return;
+  wrap.innerHTML = AI_SUGGESTIONS.slice(0,4).map(s=>
+    `<button onclick="useAiSuggestion('${s}')" style="font-size:12px;padding:6px 11px;border-radius:99px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;font-family:inherit">${s}</button>`
+  ).join('');
+}
+
+function useAiSuggestion(text){
+  document.getElementById('ai-input').value = text;
+  sendAiMessage();
+}
+
+function aiEnter(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAiMessage();}}
+
+function buildAiContext(){
+  const budget = state.pockets.find(p=>p.id==='svago');
+  const trips = state.trips.slice(0,3).map(t=>`${t.dest}${t.from?' ('+t.from+')':''}`).join(', ');
+  return `Sei un assistente viaggi personale per Kate, una ragazza italiana che vive tra Milano e la Toscana.
+
+Profilo di Kate:
+- Budget per viaggi/svago disponibile: ${budget ? '€'+budget.balance.toFixed(0)+' nel salvadanaio Svago/Viaggi' : 'non specificato'}
+- Viaggi già pianificati: ${trips || 'nessuno al momento'}
+- Preferenze note: ama i viaggi, cerca mete interessanti con buon rapporto qualità-prezzo
+- Parte spesso con il ragazzo (Dave)
+
+Il tuo compito: consigliare mete, itinerari, periodi migliori, stime di costo, ristoranti, hotel, cose da fare. Sii concisa, pratica e personale. Usa l'italiano. Quando suggerisci mete, dai sempre una stima del budget necessario. Rispondi in modo conversazionale e amichevole.`;
+}
+
+async function sendAiMessage(){
+  if(aiLoading) return;
+  const inp = document.getElementById('ai-input');
+  const text = inp.value.trim();
+  if(!text) return;
+  const key = getApiKey();
+  if(!key){initAiSection();return;}
+
+  aiMessages.push({role:'user', content:text});
+  inp.value='';
+  renderAiMessages();
+  aiLoading = true;
+  document.getElementById('ai-send-btn').style.opacity='0.4';
+
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: buildAiContext(),
+        messages: aiMessages.slice(-10)
+      })
+    });
+    const data = await res.json();
+    if(data.error){
+      if(data.error.type==='authentication_error'){
+        localStorage.removeItem('kate_api_key');
+        initAiSection();
+        appendAiError('API key non valida. Inseriscila di nuovo.');
+      } else {
+        appendAiError('Errore: '+data.error.message);
+      }
+    } else {
+      const reply = data.content?.[0]?.text||'';
+      aiMessages.push({role:'assistant', content:reply});
+      renderAiMessages();
+    }
+  } catch(e){
+    appendAiError('Errore di connessione. Riprova.');
+  }
+  aiLoading=false;
+  document.getElementById('ai-send-btn').style.opacity='1';
+}
+
+function appendAiError(msg){
+  aiMessages.push({role:'assistant', content:'⚠️ '+msg});
+  renderAiMessages();
+}
+
+function renderAiMessages(){
+  const wrap = document.getElementById('ai-messages');
+  if(!wrap) return;
+  if(!aiMessages.length){
+    wrap.innerHTML=`<div style="text-align:center;padding:20px 0">
+      <div style="font-size:28px;margin-bottom:8px">✈️</div>
+      <div style="font-size:14px;color:var(--text2);font-weight:500">Ciao Kate! Sono il tuo assistente viaggi.</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:4px">Chiedimi mete, itinerari, budget, cosa fare...</div>
+    </div>`;
+    return;
+  }
+  wrap.innerHTML = aiMessages.map(m=>{
+    const isUser = m.role==='user';
+    const txt = m.content.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>');
+    return `<div style="display:flex;${isUser?'justify-content:flex-end':'justify-content:flex-start'}">
+      <div style="max-width:85%;padding:10px 13px;border-radius:${isUser?'14px 14px 4px 14px':'14px 14px 14px 4px'};font-size:14px;line-height:1.5;
+        background:${isUser?'var(--accent)':'var(--bg2)'};
+        color:${isUser?'#fff':'var(--text)'};
+        border:${isUser?'none':'0.5px solid var(--border)'}">
+        ${txt}
+      </div>
+    </div>`;}).join('');
+  if(aiLoading) wrap.innerHTML += `<div style="display:flex;justify-content:flex-start"><div style="padding:10px 13px;border-radius:14px 14px 14px 4px;background:var(--bg2);border:0.5px solid var(--border);font-size:14px;color:var(--text3)">...</div></div>`;
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function clearAiChat(){aiMessages=[];renderAiMessages();}
+
+load();
+initAiSection();
+</script>
+</body>
+</html>
