@@ -1010,9 +1010,9 @@ function initAiSection(){
 
 function saveApiKey(){
   const val = document.getElementById('api-key-input').value.trim();
-  if(!val.startsWith('AIza')){
+  if(val.length < 20){
     const el=document.getElementById('apikey-fbk');
-    el.style.color='var(--red)';el.textContent='La chiave Gemini deve iniziare con AIza...';
+    el.style.color='var(--red)';el.textContent='Inserisci una API key valida da aistudio.google.com';
     setTimeout(()=>el.textContent='',3000);return;
   }
   localStorage.setItem('kate_gemini_key', val);
@@ -1070,7 +1070,7 @@ async function sendAiMessage(){
       parts:[{text: m.content}]
     }));
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${key}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`,
       {
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -1082,12 +1082,12 @@ async function sendAiMessage(){
     );
     const data = await res.json();
     if(data.error){
-      if(data.error.code===400||data.error.code===403){
+      if(data.error.code===401||data.error.status==='UNAUTHENTICATED'){
         localStorage.removeItem('kate_gemini_key');
         initAiSection();
         appendAiError('API key non valida. Inseriscila di nuovo.');
       } else {
-        appendAiError('Errore: '+data.error.message);
+        appendAiError('Errore: '+(data.error.message||JSON.stringify(data.error)));
       }
     } else {
       const reply = data.candidates?.[0]?.content?.parts?.[0]?.text||'';
